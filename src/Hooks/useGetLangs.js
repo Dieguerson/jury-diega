@@ -1,4 +1,3 @@
-
 function useGetLangs(octokit) {
 
   const getLangs = async (langUrl) => {

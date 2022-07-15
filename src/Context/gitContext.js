@@ -7,7 +7,7 @@ function GitProvider(props) {
   
   const user = "Dieguerson"
 
-  const token = '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'
+  const token = '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'
 
   const {userData, repoData} = useGitHub(user, token)
 
