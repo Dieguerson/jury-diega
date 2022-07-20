@@ -1,6 +1,7 @@
+import React from 'react';
 import { Outlet } from 'react-router-dom'
-import { SideBar } from './Components/SideBar';
-import { GitProvider } from './Context/gitContext';
+import { SideBar } from './components/SideBar';
+import { GitProvider } from './context/gitContext';
 
 function App() {
 

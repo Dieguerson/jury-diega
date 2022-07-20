@@ -4,7 +4,7 @@ import { useOctokit } from './useOctokit';
 import { useGetUser } from './useGetUser'
 import { useGetRepos } from './useGetRepos'
 
-function useGitHub(user, token) {
+function useGitHub(user: string, token: string) {
 
   const octokit = useOctokit(token)
 

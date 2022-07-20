@@ -1,11 +1,13 @@
 
+import { Octokit } from 'octokit'
 import { useState } from 'react'
+import { UserData } from '../interfaces/GitHub'
 
-function useGetUser(octokit) {
+function useGetUser(octokit: Octokit) {
 
-  const [userData, setUserData] = useState({alias: '', name: '', public: 0, private: 0, url: '', avatar:''})
+  const [userData, setUserData] = useState<UserData>({alias: '', name: '', public: 0, private: 0, url: '', avatar:''})
 
-  const getUser = async (user) => {
+  const getUser = async (user: string) => {
     try {
       const userResponse = (await octokit.request(`GET /users/${user}`)).data
       setUserData({
@@ -16,7 +18,7 @@ function useGetUser(octokit) {
         url: userResponse.html_url,
         avatar: userResponse.avatar_url
       })
-    } catch(error) {
+    } catch(error: any) {
       console.error(error)
     }
   }

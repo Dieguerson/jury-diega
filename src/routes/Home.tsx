@@ -1,4 +1,5 @@
-import { UserCard } from '../Components/UserCard';
+import React from 'react';
+import { UserCard } from '../components/UserCard';
 
 function Home() {
   return (

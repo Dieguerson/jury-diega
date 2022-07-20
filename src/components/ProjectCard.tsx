@@ -1,6 +1,8 @@
+import React from 'react'
 import { Icon } from '@iconify/react'
+import { RepoData } from '../interfaces/GitHub'
 
-function ProjectCard(props){
+function ProjectCard(props: RepoData){
 
   return (
     <>
