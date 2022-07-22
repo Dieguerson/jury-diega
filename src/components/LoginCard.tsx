@@ -1,25 +1,51 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Icon } from '@iconify/react'
-import { Link } from 'react-router-dom'
-import { useContext } from 'react'
-import { GitContext } from '../context/gitContext'
-import { Context } from '../interfaces/GitHub'
+import { useSearchParams } from 'react-router-dom'
 
 function LoginCard(){
-  const { userData } = useContext(GitContext) as Context
+
+  const [searchParams] = useSearchParams()
+  const code = searchParams.get('code')
+
+  useEffect(() => {
+    if(code){
+      fetch('http://localhost:5000/authenticate', {method: 'POST', body: JSON.stringify({code})})
+        .then(res => res.json()).then(res => console.log(res))
+    }
+  },[code])
   
   return (
     <>
-      <article className='bg-white m-4 rounded-md px-5 py-2 border border-gray-100 shadow-md flex justify-center items-center'>
-        <img src={userData.avatar} alt={userData.name} className='w-28 h-28 rounded-full mr-8 text-[#F0DB4F]' />
-        <section className='flex flex-col text-[#262b40]'>
-          <p className='font-bold text-2xl self-center'>{userData.alias}</p>
-          <p className='font-thin mb-2 text-sm self-center italic'>{userData.name}</p>
-          <p className='font-semibold text-base'>Public: {userData.public}</p>
-          <p className='font-semibold text-base mb-2'>Owned Private: {userData.private}</p>
-          <a href={userData.url} target="_blank" rel="noreferrer" className="bg-[#333] rounded-md flex text-[#f5f5f5] w-fit items-center justify-center px-2 py-1 font-bold self-center mb-2"><Icon icon="ion:logo-github" className='mr-2 w-5 h-5' /> GitHub</a>
-          <Link to='/projects' className="bg-[#4a50bc] rounded-md flex text-[#f5f5f5] w-fit items-center justify-center px-2 py-1 font-bold self-center">Projects</Link>
-        </section>
+      <article 
+        className='
+          bg-white
+          m-4
+          rounded-md
+          px-5
+          pb-2
+          pt-4
+          border
+          border-gray-100
+          shadow-md
+          grid
+          grid-rows-2
+          items-center
+          justify-items-center
+          h-fit
+        '
+      >
+        <p className='font-bold text-2xl row-start-1 self-center justify-self-center flex items-center mb-4'>
+          <Icon icon="icon-park-outline:gavel" className='w-10 h-10 mr-2'/>
+          Jury-Project
+        </p>
+        <a 
+          href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GH_ID}&scope=user`}
+          rel="noreferrer"
+          className="bg-[#333] rounded-md flex text-[#f5f5f5] w-fit items-center self-start justify-center px-2 py-1 font-bold row-start-2"
+        >
+          LogIn with
+          <Icon icon="ion:logo-github" className='ml-2 w-5 h-5' />
+        </a>
       </article>
     </>
   )
