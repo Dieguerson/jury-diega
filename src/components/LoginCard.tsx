@@ -1,18 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useContext } from 'react'
 import { Icon } from '@iconify/react'
-import { useSearchParams } from 'react-router-dom'
+import { GitContext } from '../context/gitContext'
+import { Context } from '../interfaces/GitHub'
 
 function LoginCard(){
 
-  const [searchParams] = useSearchParams()
-  const code = searchParams.get('code')
-
-  useEffect(() => {
-    if(code){
-      fetch('http://localhost:5000/authenticate', {method: 'POST', body: JSON.stringify({code})})
-        .then(res => res.json()).then(res => console.log(res))
-    }
-  },[code])
+  const { getCode, logStatus, logOut } = useContext(GitContext) as Context
   
   return (
     <>
@@ -38,14 +31,13 @@ function LoginCard(){
           <Icon icon="icon-park-outline:gavel" className='w-10 h-10 mr-2'/>
           Jury-Project
         </p>
-        <a 
-          href={`https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GH_ID}&scope=user`}
-          rel="noreferrer"
+        <button 
           className="bg-[#333] rounded-md flex text-[#f5f5f5] w-fit items-center self-start justify-center px-2 py-1 font-bold row-start-2"
+          onClick={!logStatus ? getCode : logOut}
         >
-          LogIn with
-          <Icon icon="ion:logo-github" className='ml-2 w-5 h-5' />
-        </a>
+          {!logStatus && <>LogIn with <Icon icon="ion:logo-github" className='ml-2 w-5 h-5' /></>}
+          {logStatus && <>LogOut</>}
+        </button>
       </article>
     </>
   )

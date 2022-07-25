@@ -1,17 +1,21 @@
-import { Octokit } from "octokit"
+import { useState } from "react"
+import { GithubLang } from "../interfaces/GitHub"
 
-function useGetLangs(octokit: Octokit) {
+function useGetLangs() {
+  
+  const [langData, setLangData] = useState<GithubLang>({})
 
-  const getLangs = async (langUrl: string | object) => {
+  const getLangs = async (langUrl: string | object, repoName: string) => {
 
     if (typeof langUrl === 'string') {
-      let langData = {}
         try {
-          langData = (await octokit.request(`GET ${langUrl}`)).data
+          await fetch(`http://localhost:5000/langs?langUrl=${langUrl}`)
+            .then(response => response.json())
+            .then((data) => {
+              setLangData({...data, repo: repoName})
+            })
         } catch(error: any) {
           console.error(error)
-        } finally {
-          return langData
         }
     } else {
       return langUrl
@@ -20,6 +24,7 @@ function useGetLangs(octokit: Octokit) {
   
   return {
     getLangs,
+    langData
   }
 }
 
