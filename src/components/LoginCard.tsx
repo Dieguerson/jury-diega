@@ -2,14 +2,10 @@ import React, { useContext } from 'react'
 import { Icon } from '@iconify/react'
 import { GitContext } from '../context/gitContext'
 import { Context } from '../interfaces/GitHub'
-import { Link, useLocation, useRoutes } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 function LoginCard(){
   const location = useLocation().pathname
-  const loc = useLocation().state
-
-  console.log(location)
-  console.log(loc)
 
   const { getCode, logStatus, logOut } = useContext(GitContext) as Context
   
