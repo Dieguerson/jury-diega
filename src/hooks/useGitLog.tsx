@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function useGitLog() {
   const [logStatus, setLogStatus] = useState(false)
@@ -13,6 +13,7 @@ function useGitLog() {
       .then((res) => {
           if (res.status === 200) {
             setLogStatus(true)
+            localStorage.setItem('logged', 'true')
           }
         })
     } catch (error) {
@@ -26,12 +27,20 @@ function useGitLog() {
       .then(res => {
         if(res.status === 200) {
           setLogStatus(false)
+          localStorage.removeItem('logged')
         }
       })
     } catch(error) {
       console.error(error)
     }
   }
+
+  useEffect(() => {
+    const prevLog = localStorage.getItem('logged')
+    if(!!prevLog) {
+      setLogStatus(!!prevLog)
+    }
+  }, [])
 
   return {
     logStatus,

@@ -2,8 +2,14 @@ import React, { useContext } from 'react'
 import { Icon } from '@iconify/react'
 import { GitContext } from '../context/gitContext'
 import { Context } from '../interfaces/GitHub'
+import { Link, useLocation, useRoutes } from 'react-router-dom'
 
 function LoginCard(){
+  const location = useLocation().pathname
+  const loc = useLocation().state
+
+  console.log(location)
+  console.log(loc)
 
   const { getCode, logStatus, logOut } = useContext(GitContext) as Context
   
@@ -31,13 +37,23 @@ function LoginCard(){
           <Icon icon="icon-park-outline:gavel" className='w-10 h-10 mr-2'/>
           Jury-Project
         </p>
-        <button 
-          className="bg-[#333] rounded-md flex text-[#f5f5f5] w-fit items-center self-start justify-center px-2 py-1 font-bold row-start-2"
-          onClick={!logStatus ? getCode : logOut}
-        >
-          {!logStatus && <>LogIn with <Icon icon="ion:logo-github" className='ml-2 w-5 h-5' /></>}
-          {logStatus && <>LogOut</>}
-        </button>
+        {
+          location === '/login' ?
+            <button 
+              className="bg-[#333] rounded-md flex text-[#f5f5f5] w-fit items-center self-start justify-center px-2 py-1 font-bold row-start-2"
+              onClick={!logStatus ? getCode : logOut}
+            >
+              {!logStatus && <>LogIn with <Icon icon="ion:logo-github" className='ml-2 w-5 h-5' /></>}
+              {logStatus && <>LogOut</>}
+            </button>
+          :
+            <Link to="login" 
+              className="bg-[#333] rounded-md flex text-[#f5f5f5] w-fit items-center self-start justify-center px-2 py-1 font-bold row-start-2"
+            >
+              Login
+            </Link>
+        }
+        
       </article>
     </>
   )
