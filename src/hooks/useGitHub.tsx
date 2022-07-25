@@ -1,24 +1,31 @@
 
-import { useEffect } from 'react'
-import { useOctokit } from './useOctokit';
 import { useGetUser } from './useGetUser'
 import { useGetRepos } from './useGetRepos'
+import { useGitLog } from '../hooks/useGitLog'
+import { useEffect } from 'react'
 
-function useGitHub(user: string, token: string) {
+function useGitHub() {
 
-  const octokit = useOctokit(token)
+  const { getCode, exchangeCode, logStatus, logOut } = useGitLog()
 
-  const { userData, getUser } = useGetUser(octokit)
-  const { repoData, getRepos } = useGetRepos(octokit)
+  const { userData, getUser } = useGetUser()
+  const { repoData, getRepos } = useGetRepos()
 
   useEffect(() => {
-    getRepos(user)
-    getUser(user)
+    if(logStatus) {
+      getUser()
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [logStatus])
   
   return {
+    logStatus,
+    getCode,
+    exchangeCode,
+    logOut,
+    getUser,
     userData,
+    getRepos,
     repoData
   }
 }

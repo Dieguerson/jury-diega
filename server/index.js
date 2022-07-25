@@ -11,12 +11,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({ type: "text/*" }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Enabled Access-Control-Allow-Origin", "*" in the header so as to by-pass the CORS error.
+// CORS error bypass.
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   next();
 });
 
+// End-point autenticación.
 app.post("/authenticate", (req, res) => {
   const { code } = req.body;
 
@@ -26,22 +27,33 @@ app.post("/authenticate", (req, res) => {
   data.append("code", code);
   data.append("redirect_uri", REACT_APP_PROXY_URL);
 
-  // Request to exchange code for an access token
-  fetch(`https://github.com/login/oauth/access_token`, {
-    method: "POST",
-    body: data,
-  })
-    .then((response) => response.text())
-    .then((paramsString) => {
-      let params = new URLSearchParams(paramsString);
-      const access_token = params.get("access_token");
-
-      // Request to return data of a user that has been authenticated
-      return fetch(`https://api.github.com/user`, {
-        headers: {
-          Authorization: `token ${access_token}`,
-        },
+  if (!process.env.USER_TOKEN) {
+    fetch(`https://github.com/login/oauth/access_token`, {
+      method: "POST",
+      body: data,
+    })
+      .then((response) => response.text())
+      .then((paramsString) => {
+        let params = new URLSearchParams(paramsString);
+        process.env.USER_TOKEN = params.get("access_token");
+      })
+      .then(() => {
+        return res.status(200).send();
+      })
+      .catch((error) => {
+        return res.status(400).json(error);
       });
+  } else {
+    res.json({message: 'Already logged-in'})
+  }
+});
+
+// End-point user.
+app.get('/user', (req, res) => {
+  fetch(`https://api.github.com/user`, {
+        headers: {
+          Authorization: `token ${process.env.USER_TOKEN}`,
+        },
     })
     .then((response) => response.json())
     .then((response) => {
@@ -50,7 +62,46 @@ app.post("/authenticate", (req, res) => {
     .catch((error) => {
       return res.status(400).json(error);
     });
-});
+})
+
+// End-point repos.
+app.get('/repos', (req, res) => {
+  fetch(`https://api.github.com/user/repos`, {
+        headers: {
+          Authorization: `token ${process.env.USER_TOKEN}`,
+        },
+    })
+    .then((response) => response.json())
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      return res.status(400).json(error);
+    });
+})
+
+// End-point langs.
+app.get('/langs', (req,res) => {
+  const { langUrl } = req.query
+  fetch(`${langUrl}`, {
+        headers: {
+          Authorization: `token ${process.env.USER_TOKEN}`,
+        },
+    })
+    .then((response) => response.json())
+    .then((response) => {
+      return res.status(200).json(response);
+    })
+    .catch((error) => {
+      return res.status(400).json(error);
+    });
+})
+
+// End-point logout.
+app.get('/logout', (req, res) => {
+  delete process.env.USER_TOKEN
+  res.status(200).send('Fuera')
+})
 
 const PORT = process.env.SERVER_PORT || 5000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
