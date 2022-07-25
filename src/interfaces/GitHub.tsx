@@ -28,6 +28,7 @@ interface Context {
   repoData: RepoData[],
   userData: UserData,
 }
+
 interface GithubUser {
   login: string;
   id: number;
@@ -160,4 +161,8 @@ interface GithubLang {
   [key: string]: number | string, 
 }
 
-export { UserData, RepoData, GitContextProps, Context, GithubUser, GithubRepo, GithubLang }
+interface LocationState {
+  prevPath: string
+}
+
+export { UserData, RepoData, GitContextProps, Context, GithubUser, GithubRepo, GithubLang, LocationState }
